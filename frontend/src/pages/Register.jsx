@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { registerUser } from '../features/user/userSlice'
-import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { registerUser, resetState } from '../features/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -16,7 +17,22 @@ function Register() {
 
   const { first_name, last_name, username, email, password } = formData
 
+  const { user, message, isError } = useSelector((state) => state.user)
+
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message)
+    }
+
+    if (user) {
+      navigate('/')
+    }
+
+    dispatch(resetState())
+  }, [isError, message, dispatch, navigate, user])
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -49,6 +65,7 @@ function Register() {
           </label>
           <input
             type="text"
+            required
             id="first_name"
             className="form-control"
             value={first_name}
@@ -61,6 +78,7 @@ function Register() {
           </label>
           <input
             type="text"
+            required
             id="last_name"
             className="form-control"
             value={last_name}
@@ -73,6 +91,7 @@ function Register() {
           </label>
           <input
             type="text"
+            required
             id="username"
             className="form-control"
             value={username}
@@ -85,6 +104,7 @@ function Register() {
           </label>
           <input
             type="email"
+            required
             id="email"
             className="form-control"
             value={email}
@@ -97,6 +117,7 @@ function Register() {
           </label>
           <input
             type="password"
+            required
             id="password"
             className="form-control"
             value={password}
@@ -109,6 +130,7 @@ function Register() {
           </label>
           <input
             type="password"
+            required
             id="confirmPassword"
             className="form-control"
             value={confirmPassword}

@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { loginUser, resetState } from '../features/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -12,11 +15,33 @@ function Login() {
 
   const { username, email, password } = formData
 
+  const { user, isError, message } = useSelector((state) => state.user)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message)
+    }
+
+    if (user) {
+      navigate('/')
+    }
+
+    dispatch(resetState())
+  }, [dispatch, user, navigate, isError, message])
+
   const onChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     })
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    dispatch(loginUser(formData))
   }
 
   return (
@@ -35,7 +60,7 @@ function Login() {
       >
         Username
       </button>
-      <form>
+      <form onSubmit={onSubmit}>
         {loginChoice === 'username' ? (
           <div>
             <label htmlFor="username" className="form-label">
@@ -75,6 +100,7 @@ function Login() {
             onChange={onChange}
           />
         </div>
+        <button className="btn btn-primary">Submit</button>
       </form>
       <p>Login using</p>
       <button className="btn btn-primary">Google</button>

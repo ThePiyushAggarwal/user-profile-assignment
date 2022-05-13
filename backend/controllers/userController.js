@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+// REGISTER USER
 const registerUser = asyncHandler(async (request, response) => {
   const { first_name, last_name, username, email, password } = request.body
 
@@ -46,6 +47,27 @@ const registerUser = asyncHandler(async (request, response) => {
   }
 })
 
+// LOGIN USER
+const loginUser = asyncHandler(async (request, response) => {
+  const { username, email, password } = request.body
+
+  const user1 = await User.findOne({ username })
+  const user2 = await User.findOne({ email })
+
+  const user = user1 || user2
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    response.status(200).json({
+      id: user._id,
+      email: user.email,
+      token: generateToken(user._id),
+    })
+  } else {
+    response.status(400)
+    throw new Error('Invalid login credentials')
+  }
+})
+
 // Generating token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_KEY, {
@@ -53,4 +75,4 @@ const generateToken = (id) => {
   })
 }
 
-module.exports = { registerUser }
+module.exports = { registerUser, loginUser }
