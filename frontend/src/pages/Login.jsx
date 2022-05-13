@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -78,6 +79,9 @@ function Login() {
       <p>Login using</p>
       <button className="btn btn-primary">Google</button>
       <button className="btn btn-primary">Facebook</button>
+      <Link to="/register" className="btn btn-secondary">
+        Register Instead
+      </Link>
     </div>
   )
 }

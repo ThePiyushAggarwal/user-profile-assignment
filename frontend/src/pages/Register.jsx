@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { registerUser } from '../features/user/userSlice'
 import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -121,6 +122,10 @@ function Register() {
           </button>
         </div>
       </form>
+
+      <Link to="/login" className="btn btn-secondary">
+        Login Instead
+      </Link>
     </div>
   )
 }
