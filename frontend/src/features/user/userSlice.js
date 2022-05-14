@@ -47,8 +47,8 @@ export const loginUser = createAsyncThunk(
 )
 
 // Logout user
-export const logOut = createAsyncThunk('user/logout', async () => {
-  await userService.logOut()
+export const logout = createAsyncThunk('user/logout', async () => {
+  await userService.logout()
 })
 
 export const userSlice = createSlice({
@@ -88,7 +88,7 @@ export const userSlice = createSlice({
       state.message = payload
       state.user = null
     },
-    [logOut.fulfilled]: (state) => {
+    [logout.fulfilled]: (state) => {
       state.user = null
     },
   },

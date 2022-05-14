@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { logOut } from '../features/user/userSlice'
+import { logout } from '../features/user/userSlice'
 
 function Home() {
   const navigate = useNavigate()
@@ -19,9 +19,10 @@ function Home() {
     <div>
       <p>
         Welcome to User Profile
-        {user ? user.email : 'nonne'}
+        {user ? user.email : ''}
       </p>
-      <button className="btn btn-primary" onClick={() => dispatch(logOut())}>
+
+      <button className="btn btn-primary" onClick={() => dispatch(logout())}>
         Logout
       </button>
     </div>
