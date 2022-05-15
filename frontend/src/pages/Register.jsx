@@ -55,45 +55,25 @@ function Register() {
 
   // First Name Validation
   const onFirstNameChange = (e) => {
-    const value = e.target.value
-    // These conditions need to be true
-    const a = /^[a-z]+$/i.test(value)
-    const b = value.length >= 3
-
-    if (!a && !b) {
-      setValidation1(false)
-      setValidationMessage1('Please include more than 3 alphabets')
-    } else if (a && !b) {
-      setValidation1(false)
-      setValidationMessage1('Please write more than 3 characters')
-    } else if (!a && b) {
-      setValidation1(false)
-      setValidationMessage1('Please include alphabets only')
-    } else {
-      setValidationMessage1('')
+    const value = e.target.value.trim() // trimming so that space isn't counted in 3 chars
+    if (/^[a-z\s]{3,30}$/i.test(value)) {
       setValidation1(true)
+      setValidationMessage1('')
+    } else {
+      setValidationMessage1('Please enter at least 3 alphabets or at most 30')
+      setValidation1(false)
     }
   }
 
   // Last Name Validation
   const onLastNameChange = (e) => {
-    const value = e.target.value
-    // These conditions need to be true
-    const a = /^[a-z]+$/i.test(value)
-    const b = value.length >= 3
-
-    if (!a && !b) {
-      setValidation2(false)
-      setValidationMessage2('Please include more than 3 alphabets')
-    } else if (a && !b) {
-      setValidation2(false)
-      setValidationMessage2('Please write more than 3 characters')
-    } else if (!a && b) {
-      setValidation2(false)
-      setValidationMessage2('Please include alphabets only')
-    } else {
-      setValidationMessage2('')
+    const value = e.target.value.trim()
+    if (/^[a-z\s]{3,30}$/i.test(value)) {
       setValidation2(true)
+      setValidationMessage2('')
+    } else {
+      setValidationMessage2('Please enter at least 3 alphabets or at most 30')
+      setValidation2(false)
     }
   }
 
@@ -139,13 +119,34 @@ function Register() {
     }
   }
 
+  // Set Submit Button Visibility
   const submitButtonVisibility =
     validation1 && validation2 && validation3 && validation4
 
   // When the submit button is clicked
   const onSubmit = (e) => {
     e.preventDefault()
-    dispatch(registerUser(formData))
+
+    // Finishing touches on names
+    const userData = {
+      first_name: first_name
+        .trim()
+        .split(' ')
+        .filter((i) => i.charAt(0) !== '')
+        .map((i) => i.charAt(0).toUpperCase() + i.slice(1).toLowerCase())
+        .join(' '),
+      last_name: last_name
+        .trim()
+        .split(' ')
+        .filter((i) => i.charAt(0) !== '')
+        .map((i) => i.charAt(0).toUpperCase() + i.slice(1).toLowerCase())
+        .join(' '),
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      password,
+    }
+
+    dispatch(registerUser(userData))
   }
 
   return (
