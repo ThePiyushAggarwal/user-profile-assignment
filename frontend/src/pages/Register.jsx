@@ -3,6 +3,7 @@ import { registerUser, resetState } from '../features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -28,6 +29,9 @@ function Register() {
   // Password validation
   const [validation4, setValidation4] = useState(false)
   const [validationMessage4, setValidationMessage4] = useState('')
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword2, setShowPassword2] = useState(false)
 
   const { user, message, isError } = useSelector((state) => state.user)
 
@@ -221,7 +225,7 @@ function Register() {
             Password
           </label>
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             required
             id="password"
             className="form-control"
@@ -231,13 +235,16 @@ function Register() {
               onPasswordChange(e)
             }}
           />
+          <button onClick={() => setShowPassword((prevState) => !prevState)}>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
         <div>
           <label htmlFor="password2" className="form-label">
             Confirm Password
           </label>
           <input
-            type="password"
+            type={showPassword2 ? 'text' : 'password'}
             required
             id="password2"
             className="form-control"
@@ -247,6 +254,9 @@ function Register() {
               onPassword2Change(e)
             }}
           />
+          <button onClick={() => setShowPassword2((prevState) => !prevState)}>
+            {showPassword2 ? <FaEyeSlash /> : <FaEye />}
+          </button>
           {validationMessage4}
         </div>
 
