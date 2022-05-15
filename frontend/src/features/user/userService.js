@@ -15,7 +15,7 @@ const registerUser = async (userData) => {
 // Login User
 const loginUser = async (userData) => {
   const response = await axios.post(API_URL + '/login', userData)
-
+  // login
   if (response.data) {
     localStorage.setItem('user', JSON.stringify(response.data))
   }
@@ -27,10 +27,21 @@ const logout = () => {
   localStorage.removeItem('user')
 }
 
+// Get User from Google, sent to the database for checking
+const getUserFromGoogle = async (userData) => {
+  const response = await axios.post(API_URL + '/googlelogin', userData)
+  // login with the details
+  if (response.data) {
+    localStorage.setItem('user', JSON.stringify(response.data))
+  }
+  return response.data
+}
+
 const userService = {
   registerUser,
   loginUser,
   logout,
+  getUserFromGoogle,
 }
 
 export default userService

@@ -51,6 +51,25 @@ export const logout = createAsyncThunk('user/logout', async () => {
   await userService.logout()
 })
 
+// Get User from Google and Sign In Or Sign Up
+export const getUserFromGoogle = createAsyncThunk(
+  'user/google',
+  async (userData, thunkAPI) => {
+    try {
+      return await userService.getUserFromGoogle(userData)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -89,6 +108,19 @@ export const userSlice = createSlice({
       state.user = null
     },
     [logout.fulfilled]: (state) => {
+      state.user = null
+    },
+    [getUserFromGoogle.pending]: (state) => {
+      state.isLoading = true
+    },
+    [getUserFromGoogle.fulfilled]: (state, { payload }) => {
+      state.isLoading = false
+      state.user = payload
+    },
+    [getUserFromGoogle.rejected]: (state, { payload }) => {
+      state.isLoading = false
+      state.isError = true
+      state.message = payload
       state.user = null
     },
   },

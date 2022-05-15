@@ -1,14 +1,31 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { loginUser, resetState } from '../features/user/userSlice'
+import { loginUser, resetState, getUserFromGoogle } from '../features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import { useGoogleOneTapLogin } from 'react-google-one-tap-login'
+
 
 function Login() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
+  })
+
+  // Google One Tap Login Hook
+  useGoogleOneTapLogin({
+    onSuccess: (response) => {
+      dispatch(getUserFromGoogle(response))  
+      console.log(response)
+    },
+    onError: (error) => console.log(error),
+    googleAccountConfigs: {
+      client_id:
+        '282718856953-2v32qmem9p6etlis5trq1875mlh3j28u.apps.googleusercontent.com',
+      cancel_on_tap_outside: false,
+      prompt_parent_id: 'prompt_container',
+    },
   })
 
   const [loginChoice, setLoginChoice] = useState('username')
@@ -102,8 +119,8 @@ function Login() {
         </div>
         <button className="btn btn-primary">Submit</button>
       </form>
-      <p>Login using</p>
-      <button className="btn btn-primary">Google</button>
+      <p>Or you can login using</p>
+      <div id="prompt_container" className="mt-5 mb-5"></div>
       <button className="btn btn-primary">Facebook</button>
       <Link to="/register" className="btn btn-secondary">
         Register Instead

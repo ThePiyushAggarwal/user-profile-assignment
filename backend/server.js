@@ -14,6 +14,7 @@ app.use(morgan('tiny'))
 
 // Body Parser
 app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 // API FOR USERS
 app.use('/api/users', require('./routes/userRoutes'))

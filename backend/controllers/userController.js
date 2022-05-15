@@ -14,8 +14,8 @@ const registerUser = asyncHandler(async (request, response) => {
   }
 
   // Checking if the user credentials exist
-  const usernameExists = await User.findOne({ username })
-  const emailExists = await User.findOne({ email })
+  const usernameExists = await User.exists({ username })
+  const emailExists = await User.exists({ email })
 
   if (usernameExists || emailExists) {
     response.status(400)
@@ -27,23 +27,22 @@ const registerUser = asyncHandler(async (request, response) => {
   const hashedPassword = await bcrypt.hash(password, salt)
 
   // Creating the user with hashed password
-  const user = await User.create({
-    first_name,
-    last_name,
-    username,
-    email,
-    password: hashedPassword,
-  })
+  try {
+    const user = await User.create({
+      first_name,
+      last_name,
+      username,
+      email,
+      password: hashedPassword,
+    })
 
-  if (user) {
     response.status(201).json({
       id: user._id,
       email: user.email,
       token: generateToken(user._id),
     })
-  } else {
-    response.status(400)
-    throw new Error('Invalid user data')
+  } catch (error) {
+    response.status(400).send(error)
   }
 })
 
@@ -51,8 +50,8 @@ const registerUser = asyncHandler(async (request, response) => {
 const loginUser = asyncHandler(async (request, response) => {
   const { username, email, password } = request.body
 
-  const user1 = await User.findOne({ username })
-  const user2 = await User.findOne({ email })
+  const user1 = await User.exists({ username })
+  const user2 = await User.exists({ email })
 
   const user = user1 || user2
 
@@ -75,4 +74,8 @@ const generateToken = (id) => {
   })
 }
 
-module.exports = { registerUser, loginUser }
+const loginGoogle = asyncHandler(async (request, response) => {
+  const { email, given_name, family_name } = request.body
+})
+
+module.exports = { registerUser, loginUser, loginGoogle }
