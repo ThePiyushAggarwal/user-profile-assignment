@@ -101,9 +101,16 @@ function Register() {
   const onUsernameChange = (e) => {
     const val = e.target.value
     const rules =
-      "Username can contain numbers, alphabets, dots and underscores. Dots can't come on first and last spots. Also, username can't have two or more consecutive dots."
+      "Username can contain numbers, alphabets, dots and underscores. Dots can't come on first and last spots. Also, username can't have two or more consecutive dots. Minimum length of the username is 3 characters (maximum 30) with at least an alphabet included"
 
-    if (/^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9_.]+$/.test(val)) {
+    // Regex expression validates the username
+    // Explanation:
+    // ^(?!\.) : dot not allowed at first place
+    // (?!.*\.\.) : consecutive dots not allowed anywhere
+    // (?!.*\.$) : dot not allowed at the end of string
+    // (?=.*[a-zA-Z]) : at least one alphabet should be there
+    // [\w.]{3,30}$ : alphanumeric characters allowed with underscore and a dot. min 3, max 30
+    if (/^(?!\.)(?!.*\.\.)(?!.*\.$)(?=.*[a-zA-Z])[\w.]{3,30}$/.test(val)) {
       setValidation3(true)
       setValidationMessage3('')
     } else {
