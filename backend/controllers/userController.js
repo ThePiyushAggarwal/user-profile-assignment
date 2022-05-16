@@ -2,6 +2,8 @@ const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { sendConfirmationEmail } = require('../mailer/mailer')
+const uuid = require('uuid')
 
 // REGISTER USER
 const registerUser = asyncHandler(async (request, response) => {
@@ -34,6 +36,7 @@ const registerUser = asyncHandler(async (request, response) => {
       username,
       email,
       password: hashedPassword,
+      uuid: uuid.v4(),
     })
 
     response.status(201).json({
@@ -41,6 +44,9 @@ const registerUser = asyncHandler(async (request, response) => {
       email: user.email,
       token: generateToken(user._id),
     })
+
+    // Sending confirmation email
+    await sendConfirmationEmail(user)
   } catch (error) {
     response.status(400).send(error)
   }
@@ -70,12 +76,40 @@ const loginUser = asyncHandler(async (request, response) => {
 // Generating token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_KEY, {
-    expiresIn: '1d',
+    expiresIn: '10d',
   })
 }
+
+// User verification from Email
+const verifyUserEmail = asyncHandler(async (request, response) => {
+  try {
+    const hash = request.params.hash.replace(/aslash/g, '/')
+    const users = await User.find().select('uuid')
+
+    console.log(users)
+
+    // Here we map through all the promises of comparison
+    const promises = await Promise.all(
+      users.map((user) => bcrypt.compare(user.uuid, hash))
+    )
+
+    // Getting the index of the 'true' promise
+    const index = promises.indexOf(true)
+    if (users[index].uuid) {
+      await User.findOneAndUpdate(
+        { uuid: users[index].uuid },
+        { verification: 'Active' },
+        { new: true }
+      )
+      response.send('Email Verified!!')
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 const loginGoogle = asyncHandler(async (request, response) => {
   const { email, given_name, family_name } = request.body
 })
 
-module.exports = { registerUser, loginUser, loginGoogle }
+module.exports = { registerUser, loginUser, loginGoogle, verifyUserEmail }

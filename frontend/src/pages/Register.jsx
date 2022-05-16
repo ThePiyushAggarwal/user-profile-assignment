@@ -235,7 +235,10 @@ function Register() {
               onPasswordChange(e)
             }}
           />
-          <button onClick={() => setShowPassword((prevState) => !prevState)}>
+          <button
+            type="button"
+            onClick={() => setShowPassword((prevState) => !prevState)}
+          >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
@@ -254,7 +257,10 @@ function Register() {
               onPassword2Change(e)
             }}
           />
-          <button onClick={() => setShowPassword2((prevState) => !prevState)}>
+          <button
+            type="button"
+            onClick={() => setShowPassword2((prevState) => !prevState)}
+          >
             {showPassword2 ? <FaEyeSlash /> : <FaEye />}
           </button>
           {validationMessage4}
@@ -264,6 +270,7 @@ function Register() {
           <button
             className="btn btn-primary"
             disabled={!submitButtonVisibility}
+            type="submit"
           >
             Submit
           </button>

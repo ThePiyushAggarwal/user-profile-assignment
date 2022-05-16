@@ -28,6 +28,16 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  verification: {
+    type: String,
+    enum: ['Pending', 'Active'],
+    default: 'Pending',
+    required: true,
+  },
+  uuid: {
+    type: String,
+    required: true,
+  },
 })
 
 module.exports = mongoose.model('User', userSchema)
