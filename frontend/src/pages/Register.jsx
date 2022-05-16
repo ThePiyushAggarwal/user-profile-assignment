@@ -33,7 +33,9 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [showPassword2, setShowPassword2] = useState(false)
 
-  const { user, message, isError } = useSelector((state) => state.user)
+  const { user, message, isError, sentVerificationLink } = useSelector(
+    (state) => state.user
+  )
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -46,8 +48,13 @@ function Register() {
     if (user) {
       navigate('/')
     }
+    if (sentVerificationLink) {
+      setTimeout(() => {
+        navigate('/verifyEmailMessage')
+      }, 3000)
+    }
     dispatch(resetState())
-  }, [isError, message, dispatch, navigate, user])
+  }, [isError, message, dispatch, navigate, user, sentVerificationLink])
 
   // This sets the values of the inputs
   const onChange = (e) => {
@@ -266,6 +273,9 @@ function Register() {
           {validationMessage4}
         </div>
 
+        {sentVerificationLink && (
+          <div>Please click on verification link sent on your email.</div>
+        )}
         <div>
           <button
             className="btn btn-primary"

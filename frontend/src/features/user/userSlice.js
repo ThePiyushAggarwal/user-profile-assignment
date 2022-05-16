@@ -5,8 +5,11 @@ const user = JSON.parse(localStorage.getItem('user'))
 
 const initialState = {
   user: user || null,
+  tempUserData: null,
+  resendCount: 0,
   isError: false,
   isLoading: false,
+  sentVerificationLink: false,
   message: '',
 }
 
@@ -22,7 +25,6 @@ export const registerUser = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString()
-
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -40,7 +42,6 @@ export const loginUser = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString()
-
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -64,7 +65,24 @@ export const getUserFromGoogle = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
 
+// Resend email to the user
+export const resendEmail = createAsyncThunk(
+  'user/resend',
+  async (tempUserData, thunkAPI) => {
+    try {
+      return await userService.resendEmail(tempUserData)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -86,7 +104,8 @@ export const userSlice = createSlice({
     },
     [registerUser.fulfilled]: (state, { payload }) => {
       state.isLoading = false
-      state.user = payload
+      state.sentVerificationLink = true
+      state.tempUserData = payload
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.isLoading = false
@@ -109,6 +128,20 @@ export const userSlice = createSlice({
     },
     [logout.fulfilled]: (state) => {
       state.user = null
+    },
+    [resendEmail.pending]: (state) => {
+      state.isLoading = true
+      state.sentVerificationLink = false
+    },
+    [resendEmail.fulfilled]: (state, { payload }) => {
+      state.isLoading = false
+      state.message = payload
+      state.resendCount += 1
+    },
+    [resendEmail.rejected]: (state, { payload }) => {
+      state.isLoading = false
+      state.isError = true
+      state.message = payload
     },
     [getUserFromGoogle.pending]: (state) => {
       state.isLoading = true

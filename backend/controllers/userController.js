@@ -39,14 +39,15 @@ const registerUser = asyncHandler(async (request, response) => {
       uuid: uuid.v4(),
     })
 
+    // Sending confirmation email
+    await sendConfirmationEmail(user)
+
     response.status(201).json({
       id: user._id,
       email: user.email,
+      uuid: user.uuid,
       token: generateToken(user._id),
     })
-
-    // Sending confirmation email
-    await sendConfirmationEmail(user)
   } catch (error) {
     response.status(400).send(error)
   }
@@ -105,6 +106,18 @@ const verifyUserEmail = asyncHandler(async (request, response) => {
     }
   } catch (error) {
     console.log(error)
+    response.send(error)
+  }
+})
+
+const resendVerification = asyncHandler(async (request, response) => {
+  const user = request.body
+  try {
+    await sendConfirmationEmail(user)
+    response.send('Email Sent!')
+  } catch (error) {
+    console.log(error)
+    response.send(error)
   }
 })
 
@@ -112,4 +125,10 @@ const loginGoogle = asyncHandler(async (request, response) => {
   const { email, given_name, family_name } = request.body
 })
 
-module.exports = { registerUser, loginUser, loginGoogle, verifyUserEmail }
+module.exports = {
+  registerUser,
+  loginUser,
+  loginGoogle,
+  verifyUserEmail,
+  resendVerification,
+}
