@@ -276,7 +276,7 @@ function Register() {
             <button
               type="button"
               onClick={() => setShowPassword((prevState) => !prevState)}
-              className="col-2 rounded"
+              className="btn btn-info col-2 rounded"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>

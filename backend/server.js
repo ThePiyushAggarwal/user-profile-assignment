@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 5000
 const connectDB = require('./config/db')
 const morgan = require('morgan')
 const errorHandler = require('./middleware/errorHandler')
+const path = require('path')
 
 // Connect to the database
 connectDB()
@@ -19,10 +20,20 @@ app.use(express.urlencoded({ extended: false }))
 // API FOR USERS
 app.use('/api/users', require('./routes/userRoutes'))
 
-// API HOME
-app.get('/', (_, response) => {
-  response.json({ message: 'Welcome to the User Profile API' })
-})
+// Serve Frontend
+if (process.env.NODE_ENV === 'production') {
+  // Set build folder as static
+  app.use(express.static(path.join(__dirname, '../frontend/build')))
+
+  app.get('*', (_, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'))
+  })
+} else {
+  // API HOME
+  app.get('/', (_, response) => {
+    response.json({ message: 'Welcome to the User Profile API' })
+  })
+}
 
 // Error Handler
 app.use(errorHandler)

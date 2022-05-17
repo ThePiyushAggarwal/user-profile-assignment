@@ -10,7 +10,7 @@ import PrivateRoute from './components/PrivateRoute'
 function App() {
   return (
     <div className="h-100 row col-12">
-      <header className="h-sm-100 h-auto display-1 bg-success col-sm-3 col-lg-4">
+      <header className="h-sm-100 h-auto display-1 bg-info col-sm-3 col-lg-4">
         User Profile
       </header>
       <div className="h-100 col-sm-9 col-lg-8 d-flex justify-content-center align-items-center">

@@ -81,7 +81,7 @@ function Login() {
     },
     onError: (error) => console.log(error),
     googleAccountConfigs: {
-      client_id: REACT_APP_CLIENT_ID,
+      client_id: process.env.REACT_APP_CLIENT_ID,
       cancel_on_tap_outside: false,
       prompt_parent_id: 'prompt_container',
     },
