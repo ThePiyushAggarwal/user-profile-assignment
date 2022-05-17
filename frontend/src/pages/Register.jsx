@@ -329,21 +329,20 @@ function Register() {
             </button>
           </div>
         )}
+        <div className="row mt-5">
+          <button
+            className="col-5 btn btn-primary "
+            disabled={!submitButtonVisibility || sentVerificationLink}
+            type="submit"
+          >
+            Submit
+          </button>
+          <div className="col-2"></div>
+          <Link to="/login" className="col-5 btn btn-secondary">
+            Login Instead
+          </Link>
+        </div>
       </form>
-
-      <div className="row mt-5">
-        <button
-          className="col-5 btn btn-primary "
-          disabled={!submitButtonVisibility || sentVerificationLink}
-          type="submit"
-        >
-          Submit
-        </button>
-        <div className="col-2"></div>
-        <Link to="/login" className="col-5 btn btn-secondary">
-          Login Instead
-        </Link>
-      </div>
     </div>
   )
 }

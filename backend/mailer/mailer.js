@@ -30,6 +30,7 @@ exports.sendConfirmationEmail = (user) => {
     transporter.sendMail(message, (err, info) => {
       if (err) {
         reject(err)
+        console.log(err)
       } else {
         result(info)
       }
