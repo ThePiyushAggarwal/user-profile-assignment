@@ -15,13 +15,15 @@ exports.sendConfirmationEmail = (user) => {
     const hash = (await bcrypt.hash(user.uuid, salt)).replace(/\//g, 'aslash')
 
     const message = {
-      from: process.env.EMAIL,
+      from: 'Users Profile',
       to: user.email,
-      subject: 'Its working?',
+      subject: 'Welcome to User Profile',
       html: `
-        <h3>hello </h3>
-        <a href='http://localhost:3000/verifyemail/${hash}' target='_blank'>Click to verify this email</a><br />
-        
+      <div>
+        <h2>Welcome to User Profile </h2>
+        <br/>
+        <a href='http://localhost:3000/verifyemail/${hash}' target='_blank' style='padding: 10px; border: 1px solid darkblue; background-color: dodgerblue; color: white; font-size: 20px; border-radius: 3px; text-decoration: none; margin-bottom: 20px;' >Click to verify this email</a><br />
+      </div>
       `,
     }
 
