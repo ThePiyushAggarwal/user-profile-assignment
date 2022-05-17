@@ -36,6 +36,7 @@ function Register() {
   const { user, message, isError, sentVerificationLink } = useSelector(
     (state) => state.user
   )
+  const { user: guser } = useSelector((state) => state.google)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -45,7 +46,7 @@ function Register() {
     if (isError) {
       toast.error(message)
     }
-    if (user) {
+    if (user || guser) {
       navigate('/')
     }
     if (sentVerificationLink) {
@@ -54,7 +55,7 @@ function Register() {
       }, 3000)
     }
     dispatch(resetState())
-  }, [isError, message, dispatch, navigate, user, sentVerificationLink])
+  }, [isError, message, dispatch, navigate, user, guser, sentVerificationLink])
 
   // This sets the values of the inputs
   const onChange = (e) => {

@@ -21,7 +21,7 @@ function App() {
           <Route path="/verifyEmailMessage" element={<AfterRegisteration />} />
         </Routes>
       </BrowserRouter>
-      <ToastContainer />
+      <ToastContainer autoClose={3000} />
     </div>
   )
 }

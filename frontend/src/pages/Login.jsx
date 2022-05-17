@@ -16,20 +16,6 @@ function Login() {
     password: '',
   })
 
-  // Google One Tap Login Hook
-  useGoogleOneTapLogin({
-    onSuccess: (response) => {
-      dispatch(getUserFromGoogle(response))
-    },
-    onError: (error) => console.log(error),
-    googleAccountConfigs: {
-      client_id:
-        '282718856953-2v32qmem9p6etlis5trq1875mlh3j28u.apps.googleusercontent.com',
-      cancel_on_tap_outside: false,
-      prompt_parent_id: 'prompt_container',
-    },
-  })
-
   const [loginChoice, setLoginChoice] = useState('username')
 
   const { username, email, password } = formData
@@ -45,8 +31,11 @@ function Login() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (isError || gisError) {
-      toast.error(message || gmessage)
+    if (isError) {
+      toast.error(message)
+    }
+    if (gisError) {
+      toast.error(gmessage)
     }
 
     if (user || guser) {
@@ -64,10 +53,39 @@ function Login() {
     })
   }
 
+  // On hitting login button
   const onSubmit = (e) => {
     e.preventDefault()
+    if (loginChoice === 'username') {
+      if (username.length === 0) {
+        return toast.error('Please fill in your username')
+      }
+    } else if (loginChoice === 'email') {
+      if (email.length === 0) {
+        return toast.error('Please fill in your email')
+      }
+    }
+
+    if (password.length === 0) {
+      return toast.error('Please enter a password')
+    }
+
     dispatch(loginUser(formData))
   }
+
+  // Google One Tap Login Hook
+  useGoogleOneTapLogin({
+    onSuccess: (response) => {
+      dispatch(getUserFromGoogle(response))
+    },
+    onError: (error) => console.log(error),
+    googleAccountConfigs: {
+      client_id:
+        '282718856953-2v32qmem9p6etlis5trq1875mlh3j28u.apps.googleusercontent.com',
+      cancel_on_tap_outside: false,
+      prompt_parent_id: 'prompt_container',
+    },
+  })
 
   return (
     <div>
@@ -125,13 +143,14 @@ function Login() {
             onChange={onChange}
           />
         </div>
-        <button className="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary">
+          Login
+        </button>
       </form>
-      <p>Or you can login using</p>
-      <div id="prompt_container" className="mt-5 mb-5"></div>
-      <button className="btn btn-primary">Facebook</button>
+      <p>Or you can login using Google</p>
+      <div id="prompt_container" className="mb-5"></div>
       <Link to="/register" className="btn btn-secondary">
-        Register Instead
+        Not an user? Register
       </Link>
     </div>
   )

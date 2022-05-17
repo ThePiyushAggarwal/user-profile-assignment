@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { sendConfirmationEmail } = require('../mailer/mailer')
 const uuid = require('uuid')
+const res = require('express/lib/response')
 
 // REGISTER USER
-// Route: /api/users/
+// Route: POST /api/users/
 const registerUser = asyncHandler(async (request, response) => {
   const { first_name, last_name, username, email, password } = request.body
 
@@ -58,24 +59,39 @@ const registerUser = asyncHandler(async (request, response) => {
 })
 
 // LOGIN USER
+// POST /login
 const loginUser = asyncHandler(async (request, response) => {
   const { username, email, password } = request.body
 
-  const user1 = await User.exists({ username })
-  const user2 = await User.exists({ email })
-
+  // Checking if the user exists
+  const user1 = await User.findOne({ username })
+  const user2 = await User.findOne({ email })
   const user = user1 || user2
 
+  // try {
+  // Checking user credentials
   if (user && (await bcrypt.compare(password, user.password))) {
-    response.status(200).json({
-      id: user._id,
-      email: user.email,
-      token: generateToken(user._id),
-    })
+    // Checking Verification Status
+    if (user.verification === 'Active') {
+      response.status(200).json({
+        id: user._id,
+        email: user.email,
+        token: generateToken(user._id),
+      })
+    } else {
+      response.status(400)
+      throw new Error(
+        'User is not verified! Please click on link sent in verification.'
+      )
+    }
   } else {
     response.status(400)
     throw new Error('Invalid login credentials')
   }
+  // } catch (error) {
+  //   console.log(error)
+  //   response.status(400).send(error)
+  // }
 })
 
 // Generating token
