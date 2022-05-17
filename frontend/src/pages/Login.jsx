@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { loginUser, resetState, getUserFromGoogle } from '../features/user/userSlice'
+import { loginUser, resetState } from '../features/user/userSlice'
+import {
+  getUserFromGoogle,
+  resetState as gresetState,
+} from '../features/google/googleSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { useGoogleOneTapLogin } from 'react-google-one-tap-login'
-
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -16,8 +19,7 @@ function Login() {
   // Google One Tap Login Hook
   useGoogleOneTapLogin({
     onSuccess: (response) => {
-      dispatch(getUserFromGoogle(response))  
-      console.log(response)
+      dispatch(getUserFromGoogle(response))
     },
     onError: (error) => console.log(error),
     googleAccountConfigs: {
@@ -33,21 +35,27 @@ function Login() {
   const { username, email, password } = formData
 
   const { user, isError, message } = useSelector((state) => state.user)
+  const {
+    user: guser,
+    isError: gisError,
+    message: gmessage,
+  } = useSelector((state) => state.google)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message)
+    if (isError || gisError) {
+      toast.error(message || gmessage)
     }
 
-    if (user) {
+    if (user || guser) {
       navigate('/')
     }
 
     dispatch(resetState())
-  }, [dispatch, user, navigate, isError, message])
+    dispatch(gresetState())
+  }, [dispatch, user, guser, navigate, isError, gisError, message, gmessage])
 
   const onChange = (e) => {
     setFormData({

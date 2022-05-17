@@ -33,3 +33,33 @@ exports.sendConfirmationEmail = (user) => {
     })
   })
 }
+
+exports.sendGoogleAcknowledgementEmail = (email) => {
+  return new Promise(async (result, reject) => {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    })
+
+    const message = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Welcome to User Profile',
+      html: `
+        <h3>Welcome to User Profile </h3>
+        <p>You are registered with us!</p>
+      `,
+    }
+
+    transporter.sendMail(message, (err, info) => {
+      if (err) {
+        reject(err)
+      } else {
+        result(info)
+      }
+    })
+  })
+}

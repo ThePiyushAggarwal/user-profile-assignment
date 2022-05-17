@@ -48,27 +48,9 @@ export const loginUser = createAsyncThunk(
 )
 
 // Logout user
-export const logout = createAsyncThunk('user/logout', async () => {
-  await userService.logout()
+export const logout = createAsyncThunk('user/logout', () => {
+  userService.logout()
 })
-
-// Get User from Google and Sign In Or Sign Up
-export const getUserFromGoogle = createAsyncThunk(
-  'user/google',
-  async (userData, thunkAPI) => {
-    try {
-      return await userService.getUserFromGoogle(userData)
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
-      return thunkAPI.rejectWithValue(message)
-    }
-  }
-)
 
 // Resend email to the user
 export const resendEmail = createAsyncThunk(
@@ -142,19 +124,6 @@ export const userSlice = createSlice({
       state.isLoading = false
       state.isError = true
       state.message = payload
-    },
-    [getUserFromGoogle.pending]: (state) => {
-      state.isLoading = true
-    },
-    [getUserFromGoogle.fulfilled]: (state, { payload }) => {
-      state.isLoading = false
-      state.user = payload
-    },
-    [getUserFromGoogle.rejected]: (state, { payload }) => {
-      state.isLoading = false
-      state.isError = true
-      state.message = payload
-      state.user = null
     },
   },
 })

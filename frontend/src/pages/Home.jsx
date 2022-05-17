@@ -1,28 +1,26 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../features/user/userSlice'
+import { logout as glogout } from '../features/google/googleSlice'
 
 function Home() {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const { user } = useSelector((state) => state.user)
+  const { user: user1 } = useSelector((state) => state.user)
+  const { user: user2 } = useSelector((state) => state.google)
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login')
-    }
-  }, [user, navigate])
+  const user = user1 || user2
+
+  const onLogout = () => {
+    dispatch(logout())
+    dispatch(glogout())
+  }
 
   return (
     <div>
-      <p>
-        Welcome to User Profile
-        {user ? user.email : ''}
-      </p>
+      <p>Welcome to User Profile</p>
+      <h1> {user ? user.email : ''}</h1>
 
-      <button className="btn btn-primary" onClick={() => dispatch(logout())}>
+      <button className="btn btn-primary" onClick={onLogout}>
         Logout
       </button>
     </div>

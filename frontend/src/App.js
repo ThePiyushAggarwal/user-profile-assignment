@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AfterRegisteration from './pages/AfterRegisteration'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
   return (
@@ -12,7 +13,9 @@ function App() {
       <header>User Profile</header>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verifyEmailMessage" element={<AfterRegisteration />} />

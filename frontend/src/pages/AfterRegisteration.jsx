@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 function AfterRegisteration() {
   const { tempUserData, isError, message, resendCount } = useSelector(
@@ -43,9 +44,14 @@ function AfterRegisteration() {
         type="button"
         disabled={resendCount > 2 ? true : false}
         onClick={resend}
+        className="btn btn-primary mb-4"
       >
         {resendCount > 2 ? 'Please try again after sometime' : 'Resend Email'}
       </button>
+      <p>If already confirmed.</p>
+      <Link to="/" className="btn btn-primary">
+        Go to Home
+      </Link>
     </div>
   )
 }

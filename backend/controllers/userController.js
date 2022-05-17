@@ -6,6 +6,7 @@ const { sendConfirmationEmail } = require('../mailer/mailer')
 const uuid = require('uuid')
 
 // REGISTER USER
+// Route: /api/users/
 const registerUser = asyncHandler(async (request, response) => {
   const { first_name, last_name, username, email, password } = request.body
 
@@ -39,15 +40,18 @@ const registerUser = asyncHandler(async (request, response) => {
       uuid: uuid.v4(),
     })
 
-    // Sending confirmation email
-    await sendConfirmationEmail(user)
+    // This will ensure mongoose validation
+    if (user) {
+      // Sending confirmation email
+      await sendConfirmationEmail(user)
 
-    response.status(201).json({
-      id: user._id,
-      email: user.email,
-      uuid: user.uuid,
-      token: generateToken(user._id),
-    })
+      response.status(201).json({
+        id: user._id,
+        email: user.email,
+        uuid: user.uuid,
+        token: generateToken(user._id),
+      })
+    }
   } catch (error) {
     response.status(400).send(error)
   }
@@ -110,6 +114,7 @@ const verifyUserEmail = asyncHandler(async (request, response) => {
   }
 })
 
+// Sending verification Email again
 const resendVerification = asyncHandler(async (request, response) => {
   const user = request.body
   try {
@@ -121,14 +126,9 @@ const resendVerification = asyncHandler(async (request, response) => {
   }
 })
 
-const loginGoogle = asyncHandler(async (request, response) => {
-  const { email, given_name, family_name } = request.body
-})
-
 module.exports = {
   registerUser,
   loginUser,
-  loginGoogle,
   verifyUserEmail,
   resendVerification,
 }
