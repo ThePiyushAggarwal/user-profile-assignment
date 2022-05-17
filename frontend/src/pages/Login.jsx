@@ -78,19 +78,17 @@ function Login() {
   useGoogleOneTapLogin({
     onSuccess: (response) => {
       dispatch(getUserFromGoogle(response))
-      console.log(response)
     },
     onError: (error) => console.log(error),
     googleAccountConfigs: {
-      client_id:
-        '282718856953-2v32qmem9p6etlis5trq1875mlh3j28u.apps.googleusercontent.com',
+      client_id: REACT_APP_CLIENT_ID,
       cancel_on_tap_outside: false,
       prompt_parent_id: 'prompt_container',
     },
   })
 
   return (
-    <div>
+    <div className="w-75">
       <p>Login</p>
       using
       <button

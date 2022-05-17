@@ -184,7 +184,8 @@ function Register() {
   }
 
   return (
-    <div>
+    <div className="w-75">
+      <div className="display-3 mb-4">Register</div>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="first_name" className="form-label">
@@ -201,7 +202,9 @@ function Register() {
               onFirstNameChange(e)
             }}
           />
-          {validationMessage1}
+          <div className={`${validationMessage1 && 'alert'}  alert-info `}>
+            {validationMessage1}
+          </div>
         </div>
         <div>
           <label htmlFor="last_name" className="form-label">
@@ -218,7 +221,9 @@ function Register() {
               onLastNameChange(e)
             }}
           />
-          {validationMessage2}
+          <div className={`${validationMessage2 && 'alert'}  alert-info `}>
+            {validationMessage2}
+          </div>
         </div>
         <div>
           <label htmlFor="username" className="form-label">
@@ -235,7 +240,9 @@ function Register() {
               onUsernameChange(e)
             }}
           />
-          {validationMessage3}
+          <div className={`${validationMessage3 && 'alert'}  alert-info `}>
+            {validationMessage3}
+          </div>
         </div>
         <div>
           <label htmlFor="email" className="form-label">
@@ -254,52 +261,62 @@ function Register() {
           <label htmlFor="password" className="form-label">
             Password
           </label>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            required
-            id="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => {
-              onChange(e)
-              onPasswordChange(e)
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prevState) => !prevState)}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
+          <div className="row mx-1">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              id="password"
+              className="form-control col"
+              value={password}
+              onChange={(e) => {
+                onChange(e)
+                onPasswordChange(e)
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prevState) => !prevState)}
+              className="col-2 rounded"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
         </div>
         <div>
           <label htmlFor="password2" className="form-label">
             Confirm Password
           </label>
-          <input
-            type={showPassword2 ? 'text' : 'password'}
-            required
-            id="password2"
-            className="form-control"
-            value={password2}
-            onChange={(e) => {
-              onChange(e)
-              onPassword2Change(e)
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword2((prevState) => !prevState)}
-          >
-            {showPassword2 ? <FaEyeSlash /> : <FaEye />}
-          </button>
-          {validationMessage4}
+          <div className="row mx-1">
+            <input
+              type={showPassword2 ? 'text' : 'password'}
+              required
+              id="password2"
+              className="form-control col"
+              value={password2}
+              onChange={(e) => {
+                onChange(e)
+                onPassword2Change(e)
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword2((prevState) => !prevState)}
+              className="btn btn-info col-2 rounded"
+            >
+              {showPassword2 ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          <div className={`${validationMessage4 && 'alert'}  alert-info `}>
+            {validationMessage4}
+          </div>
         </div>
 
         {sentVerificationLink && (
           <div>
-            Please click on verification link sent on your email. And refresh to
-            login.
+            <p className="alert alert-info">
+              Please click on verification link sent on your email. And refresh
+              to login.
+            </p>
             <button
               type="button"
               disabled={resendCount > 2 ? true : false}
@@ -312,20 +329,21 @@ function Register() {
             </button>
           </div>
         )}
-        <div>
-          <button
-            className="btn btn-primary"
-            disabled={!submitButtonVisibility || sentVerificationLink}
-            type="submit"
-          >
-            Submit
-          </button>
-        </div>
       </form>
 
-      <Link to="/login" className="btn btn-secondary">
-        Login Instead
-      </Link>
+      <div className="row mt-5">
+        <button
+          className="col-5 btn btn-primary "
+          disabled={!submitButtonVisibility || sentVerificationLink}
+          type="submit"
+        >
+          Submit
+        </button>
+        <div className="col-2"></div>
+        <Link to="/login" className="col-5 btn btn-secondary">
+          Login Instead
+        </Link>
+      </div>
     </div>
   )
 }

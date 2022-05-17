@@ -16,7 +16,7 @@ function Home() {
   }
 
   return (
-    <div>
+    <div className="w-75">
       <p>Welcome to User Profile</p>
       <h1> {user ? user.email : ''}</h1>
 
