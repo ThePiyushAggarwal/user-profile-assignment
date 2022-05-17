@@ -22,7 +22,7 @@ exports.sendConfirmationEmail = (user) => {
       <div>
         <h2>Welcome to User Profile </h2>
         <br/>
-        <a href='http://localhost:3000/verifyemail/${hash}' target='_blank' style='padding: 10px; border: 1px solid darkblue; background-color: dodgerblue; color: white; font-size: 20px; border-radius: 3px; text-decoration: none; margin-bottom: 20px;' >Click to verify this email</a><br />
+        <a href='https://users-profile-a.herokuapp.com/verifyemail/${hash}' target='_blank' style='padding: 10px; border: 1px solid darkblue; background-color: dodgerblue; color: white; font-size: 20px; border-radius: 3px; text-decoration: none; margin-bottom: 20px;' >Click to verify this email</a><br />
       </div>
       `,
     }
