@@ -10,9 +10,11 @@ const initialState = {
   isError: false,
   isLoading: false,
   sentVerificationLink: false,
+  emailVerified: false,
   message: '',
 }
 
+// Register User
 export const registerUser = createAsyncThunk(
   'user/register',
   async (userData, thunkAPI) => {
@@ -30,11 +32,30 @@ export const registerUser = createAsyncThunk(
   }
 )
 
+// Login User
 export const loginUser = createAsyncThunk(
   'user/login',
   async (userData, thunkAPI) => {
     try {
       return await userService.loginUser(userData)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+// Verify email and login
+export const verifyEmail = createAsyncThunk(
+  'user/verify',
+  async (hash, thunkAPI) => {
+    try {
+      return await userService.verifyUser(hash)
     } catch (error) {
       const message =
         (error.response &&
@@ -77,10 +98,12 @@ export const userSlice = createSlice({
     resetState: (state) => {
       state.isError = false
       state.isLoading = false
+      state.emailVerified = true
       state.message = ''
     },
   },
   extraReducers: {
+    // Register
     [registerUser.pending]: (state) => {
       state.isLoading = true
     },
@@ -95,6 +118,7 @@ export const userSlice = createSlice({
       state.message = payload
       state.user = null
     },
+    // Login
     [loginUser.pending]: (state) => {
       state.isLoading = true
     },
@@ -108,12 +132,28 @@ export const userSlice = createSlice({
       state.message = payload
       state.user = null
     },
+    // Verify and login
+    [verifyEmail.pending]: (state) => {
+      state.isLoading = true
+    },
+    [verifyEmail.fulfilled]: (state, { payload }) => {
+      state.isLoading = false
+      state.user = payload
+      state.emailVerified = true
+    },
+    [verifyEmail.rejected]: (state, { payload }) => {
+      state.isLoading = false
+      state.isError = true
+      state.message = payload
+      state.user = null
+    },
+    // Logout
     [logout.fulfilled]: (state) => {
       state.user = null
     },
+    // Resend Email
     [resendEmail.pending]: (state) => {
       state.isLoading = true
-      state.sentVerificationLink = false
     },
     [resendEmail.fulfilled]: (state, { payload }) => {
       state.isLoading = false

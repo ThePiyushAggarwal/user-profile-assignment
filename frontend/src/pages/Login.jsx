@@ -56,6 +56,8 @@ function Login() {
   // On hitting login button
   const onSubmit = (e) => {
     e.preventDefault()
+
+    // Login Validation
     if (loginChoice === 'username') {
       if (username.length === 0) {
         return toast.error('Please fill in your username')
@@ -65,7 +67,6 @@ function Login() {
         return toast.error('Please fill in your email')
       }
     }
-
     if (password.length === 0) {
       return toast.error('Please enter a password')
     }
@@ -77,6 +78,7 @@ function Login() {
   useGoogleOneTapLogin({
     onSuccess: (response) => {
       dispatch(getUserFromGoogle(response))
+      console.log(response)
     },
     onError: (error) => console.log(error),
     googleAccountConfigs: {

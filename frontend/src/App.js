@@ -4,7 +4,7 @@ import Login from './pages/Login'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import AfterRegisteration from './pages/AfterRegisteration'
+import VerifyEmail from './pages/VerifyEmail'
 import PrivateRoute from './components/PrivateRoute'
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/verifyEmailMessage" element={<AfterRegisteration />} />
+          <Route path="/verifyEmail/:hash" element={<VerifyEmail />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer autoClose={3000} />

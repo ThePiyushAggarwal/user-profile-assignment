@@ -27,6 +27,16 @@ const loginUser = async (userData) => {
   return response.data
 }
 
+// Verify and login user
+const verifyUser = async (hash) => {
+  const response = await axios.get(API_URL + '/verify/' + hash)
+  // Login
+  if (response.data) {
+    localStorage.setItem('user', JSON.stringify(response.data))
+  }
+  return response.data
+}
+
 // Logout User
 const logout = () => {
   localStorage.removeItem('user')
@@ -35,6 +45,7 @@ const logout = () => {
 const userService = {
   registerUser,
   loginUser,
+  verifyUser,
   logout,
   resendEmail,
 }

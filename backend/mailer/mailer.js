@@ -20,7 +20,8 @@ exports.sendConfirmationEmail = (user) => {
       subject: 'Its working?',
       html: `
         <h3>hello </h3>
-        <a href='http://localhost:5000/api/users/verify/${hash}' target='_blank'>Verify by clicking this link</a>
+        <a href='http://localhost:3000/verifyemail/${hash}' target='_blank'>Click to verify this email</a><br />
+        
       `,
     }
 

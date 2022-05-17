@@ -1,15 +1,23 @@
 const User = require('../models/userModel')
+const GoogleUser = require('../models/googleModel')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { sendConfirmationEmail } = require('../mailer/mailer')
 const uuid = require('uuid')
-const res = require('express/lib/response')
 
 // REGISTER USER
 // Route: POST /api/users/
 const registerUser = asyncHandler(async (request, response) => {
   const { first_name, last_name, username, email, password } = request.body
+
+  // Checking if the use already exists in googleusers collection
+  if (email && (await GoogleUser.exists({ email }))) {
+    response.status(400)
+    throw new Error(
+      'You are already registered using Google. Please go to login page.'
+    )
+  }
 
   // Validation
   if (!first_name || !last_name || !username || !email || !password) {
@@ -46,11 +54,11 @@ const registerUser = asyncHandler(async (request, response) => {
       // Sending confirmation email
       await sendConfirmationEmail(user)
 
+      // Sending this data only for if resend email is requested
       response.status(201).json({
         id: user._id,
         email: user.email,
         uuid: user.uuid,
-        token: generateToken(user._id),
       })
     }
   } catch (error) {
@@ -88,10 +96,38 @@ const loginUser = asyncHandler(async (request, response) => {
     response.status(400)
     throw new Error('Invalid login credentials')
   }
-  // } catch (error) {
-  //   console.log(error)
-  //   response.status(400).send(error)
-  // }
+})
+
+// USER VERIFICATION
+const verifyUserEmail = asyncHandler(async (request, response) => {
+  try {
+    const hash = request.params.hash.replace(/aslash/g, '/')
+    const users = await User.find().select('uuid')
+
+    // Here we map through all the promises of comparison
+    const promises = await Promise.all(
+      users.map((user) => bcrypt.compare(user.uuid, hash))
+    )
+
+    // Getting the index of the 'true' promise to get the matched user
+    const index = promises.indexOf(true)
+    if (users[index].uuid) {
+      const user = await User.findOneAndUpdate(
+        { uuid: users[index].uuid },
+        { verification: 'Active' },
+        { new: true }
+      )
+
+      response.json({
+        id: user._id,
+        email: user.email,
+        token: generateToken(user._id),
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    response.send(error)
+  }
 })
 
 // Generating token
@@ -100,35 +136,6 @@ const generateToken = (id) => {
     expiresIn: '10d',
   })
 }
-
-// User verification from Email
-const verifyUserEmail = asyncHandler(async (request, response) => {
-  try {
-    const hash = request.params.hash.replace(/aslash/g, '/')
-    const users = await User.find().select('uuid')
-
-    console.log(users)
-
-    // Here we map through all the promises of comparison
-    const promises = await Promise.all(
-      users.map((user) => bcrypt.compare(user.uuid, hash))
-    )
-
-    // Getting the index of the 'true' promise
-    const index = promises.indexOf(true)
-    if (users[index].uuid) {
-      await User.findOneAndUpdate(
-        { uuid: users[index].uuid },
-        { verification: 'Active' },
-        { new: true }
-      )
-      response.send('Email Verified!!')
-    }
-  } catch (error) {
-    console.log(error)
-    response.send(error)
-  }
-})
 
 // Sending verification Email again
 const resendVerification = asyncHandler(async (request, response) => {

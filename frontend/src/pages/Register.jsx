@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
-import { registerUser, resetState } from '../features/user/userSlice'
+import {
+  registerUser,
+  resetState,
+  resendEmail,
+} from '../features/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -33,9 +37,14 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [showPassword2, setShowPassword2] = useState(false)
 
-  const { user, message, isError, sentVerificationLink } = useSelector(
-    (state) => state.user
-  )
+  const {
+    user,
+    message,
+    isError,
+    sentVerificationLink,
+    tempUserData,
+    resendCount,
+  } = useSelector((state) => state.user)
   const { user: guser } = useSelector((state) => state.google)
 
   const dispatch = useDispatch()
@@ -46,16 +55,22 @@ function Register() {
     if (isError) {
       toast.error(message)
     }
+
     if (user || guser) {
       navigate('/')
     }
-    if (sentVerificationLink) {
-      setTimeout(() => {
-        navigate('/verifyEmailMessage')
-      }, 3000)
-    }
+
     dispatch(resetState())
-  }, [isError, message, dispatch, navigate, user, guser, sentVerificationLink])
+  }, [
+    isError,
+    message,
+    dispatch,
+    navigate,
+    user,
+    guser,
+    sentVerificationLink,
+    resendCount,
+  ])
 
   // This sets the values of the inputs
   const onChange = (e) => {
@@ -159,6 +174,13 @@ function Register() {
     }
 
     dispatch(registerUser(userData))
+  }
+
+  // Resend email function
+  const resend = () => {
+    if (tempUserData) {
+      dispatch(resendEmail(tempUserData))
+    }
   }
 
   return (
@@ -275,12 +297,25 @@ function Register() {
         </div>
 
         {sentVerificationLink && (
-          <div>Please click on verification link sent on your email.</div>
+          <div>
+            Please click on verification link sent on your email. And refresh to
+            login.
+            <button
+              type="button"
+              disabled={resendCount > 2 ? true : false}
+              onClick={resend}
+              className="btn btn-primary mb-4"
+            >
+              {resendCount > 2
+                ? 'Please try again after sometime'
+                : 'Resend Email'}
+            </button>
+          </div>
         )}
         <div>
           <button
             className="btn btn-primary"
-            disabled={!submitButtonVisibility}
+            disabled={!submitButtonVisibility || sentVerificationLink}
             type="submit"
           >
             Submit
